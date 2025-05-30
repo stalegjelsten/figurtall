@@ -2,17 +2,38 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Sketch</title>
 
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="style.css" />
 
     <script src="libraries/p5.min.js"></script>
     <script src="libraries/p5.sound.min.js"></script>
   </head>
 
   <body>
-    <script src="sketch.js"></script>
+    <div id="divcanvas">
+      <script src="sketch.js"></script>
+    </div>
+    <div class="parent">
+      <div class="directionPad" id="div1">
+        <button id="DW">︎︎→</button>
+      </div>
+      <div class="directionPad" id="div2"><button id="DS">︎↑</button></div>
+      <div class="directionPad" id="div3"><button id="DN">︎↓</button></div>
+      <div class="directionPad" id="div4"><button id="DE">←</button></div>
+      <div class="directionPad" id="div5"><button id="UW">←</button></div>
+      <div class="directionPad" id="div6"><button id="UN">↑</button></div>
+      <div class="directionPad" id="div7"><button id="UE">→</button></div>
+      <div class="directionPad" id="div8"><button id="US">↓</button></div>
+      <div class="directionPad" id="div9">Fjern</div>
+      <div class="directionPad" id="div10">Legg til</div>
+    </div>
+    <div id="sliderparent">
+      <div id="sliderName">Rutenettstørrelse</div>
+      <div id="slider"></div>
+    </div>
+    <div id="infobox"></div>
   </body>
 </html>
