@@ -1,0 +1,59 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+canvas {
+  display: block;
+}
+
+p {
+  margin: 1em;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+
+button {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+  margin-left: 2em;
+  --kbd-color-background: #efefef;
+  --kbd-color-border: #ddd;
+  --kbd-color-text: #000;
+
+  background-color: var(--kbd-color-background);
+  color: var(--kbd-color-text);
+
+  border-radius: 0.25rem;
+
+  border: 1px solid var(--kbd-color-border);
+
+  box-shadow: 0 2px 0 1px var(--kbd-color-border);
+
+  cursor: default;
+
+  font-family: monospace;
+
+  font-size: 0.81em;
+
+  line-height: 1;
+
+  min-width: 0.75rem;
+  max-width: 14rem;
+  display: inline;
+  text-align: center;
+
+  padding: 8px 5px;
+
+  position: relative;
+  top: -1px;
+
+  &:hover {
+    box-shadow: 0 1.5px 0 0.5px var(--kbd-color-border);
+    top: 0.5px;
+  }
+}
