@@ -3,7 +3,7 @@ class Grid {
     this.boxes = [];
     for (let i = 0; i < width / gridSize; i++) {
       for (let j = 0; j < height / gridSize; j++) {
-        this.boxes.push(new Box(i * gridSize, j * gridSize, gridSize));
+        this.boxes.push(new Box(i * gridSize, j * gridSize, gridSize, 0));
       }
     }
   }
@@ -40,11 +40,12 @@ class Grid {
 }
 
 class Box {
-  constructor(x, y, size) {
+  constructor(x, y, size, colorIndex) {
     // This code runs once when an instance is created.
     this.x = x; // + int(lineWeight / 2);
     this.y = y; // + int(lineWeight / 2);
     this.size = size;
+    this.colorIndex = colorIndex;
     this.strokeColors = [
       color(0, 1),
       color(0, 1),
@@ -60,13 +61,11 @@ class Box {
       color(120, 20, 90),
       color(340, 30, 90),
     ];
-    this.color = this.colors[0];
-    this.colorIndex = 0;
   }
 
   show() {
     push();
-    fill(this.color);
+    fill(this.colors[this.colorIndex]);
     if (this.colorIndex == 0) {
       strokeWeight(0);
       noStroke();
@@ -85,7 +84,6 @@ class Box {
   }
   changeColor() {
     this.colorIndex = (this.colorIndex + 1) % this.colors.length;
-    this.color = this.colors[this.colorIndex];
   }
 }
 
@@ -99,14 +97,27 @@ function setup() {
   colorMode(HSB);
   canvas = createCanvas(gridSize * 50, gridSize * 20);
   myGrid = new Grid();
+  let savedData = getItem("storedGrid");
+  console.log(savedData);
+  // If no data has been saved yet
+  if (savedData !== null) {
+    // Otherwise convert the data to Bubble objects
+    loadData(savedData);
+  }
+
   createP("Trykk i rutenettet for å endre farge på rutene.");
   let showBtn = createButton("Space (vis rutenett)");
   let saveBtn = createButton("S (lagre bilde)");
+  let resetBtn = createButton("Tøm lerret");
   showBtn.mousePressed((it) => {
     showGrid = !showGrid;
   });
   saveBtn.mousePressed((it) => {
     saveCanvas("figurtall", "png");
+  });
+  resetBtn.mousePressed((it) => {
+    removeItem("storedGrid");
+    myGrid = new Grid();
   });
 }
 
@@ -116,6 +127,15 @@ function draw() {
     myGrid.showGrid();
   }
   myGrid.show();
+}
+
+// Convert saved Bubble data into Bubble Objects
+function loadData(storedGrid) {
+  let i = 0;
+  for (let box of storedGrid) {
+    myGrid.boxes[i] = new Box(box.x, box.y, box.size, box.colorIndex);
+    i++;
+  }
 }
 
 function mouseClicked() {
@@ -130,8 +150,9 @@ function mouseClicked() {
   if (col >= 0 && col < cols && row >= 0 && row < rows) {
     // flatten 2d into 1d index
     let idx = row + col * rows;
-    console.log("Col:", col, "Row: ", row, "idx:", idx);
+    console.log("Col:", col, "Row: ", row, "idx: ", idx);
     myGrid.boxes[idx].changeColor();
+    storeItem("storedGrid", myGrid.boxes);
   }
 }
 
