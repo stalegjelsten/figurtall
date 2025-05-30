@@ -73,7 +73,16 @@ class Box {
       stroke(this.strokeColors[this.colorIndex]);
       strokeWeight(lineWeight);
     }
-    square(this.x, this.y, this.size);
+    if (useCircles) {
+      ellipseMode(CORNER);
+      circle(
+        this.x + lineWeight,
+        this.y + lineWeight,
+        this.size - 2 * lineWeight
+      );
+    } else {
+      square(this.x, this.y, this.size);
+    }
     pop();
   }
 
@@ -90,6 +99,7 @@ class Box {
 let myGrid;
 let gridSize = 30;
 let showGrid = true;
+let useCircles = false;
 let lineWeight = 2;
 let canvas;
 
@@ -118,6 +128,10 @@ function setup() {
   resetBtn.mousePressed((it) => {
     removeItem("storedGrid");
     myGrid = new Grid();
+  });
+  let circleBtn = createButton("Sirkler");
+  circleBtn.mousePressed((it) => {
+    useCircles = !useCircles;
   });
 }
 
