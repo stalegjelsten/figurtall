@@ -132,6 +132,11 @@ function setup() {
   let circleBtn = createButton("Sirkler");
   circleBtn.mousePressed((it) => {
     useCircles = !useCircles;
+    if (circleBtn.html() == "Sirkler") {
+      circleBtn.html("Rektangler");
+    } else {
+      circleBtn.html("Sirkler");
+    }
   });
 }
 
