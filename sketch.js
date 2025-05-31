@@ -5,9 +5,11 @@ let cellSize = 30;
 let showGrid = true;
 let useCircles = false;
 let lineWeight = 2;
+let curColor = 1;
 let colors;
 let canvas;
 let gridSizeSlider;
+let colorBtn;
 
 function setup() {
   canvas = createCanvas(
@@ -28,6 +30,7 @@ function setup() {
 
 function draw() {
   background(255);
+  checkMouse();
   myGrid.show();
 }
 
@@ -65,17 +68,35 @@ function loadData() {
   }
 }
 
-function mousePressed() {
-  let col = floor(mouseX / cellSize);
-  let row = floor(mouseY / cellSize);
-
-  if (col >= 0 && col < cols && row >= 0 && row < rows) {
-    if (mouseButton == LEFT) {
-      myGrid.boxes[col][row].changeColor(1);
-    } else if (mouseButton == RIGHT) {
-      myGrid.boxes[col][row].changeColor(-1);
+function checkMouse() {
+  if (mouseIsPressed) {
+    let col = floor(mouseX / cellSize);
+    let row = floor(mouseY / cellSize);
+    if (col >= 0 && col < cols && row >= 0 && row < rows) {
+      if (mouseButton == LEFT) {
+        myGrid.boxes[col][row].setColor(-1);
+      } else if (mouseButton == RIGHT) {
+        myGrid.boxes[col][row].setColor(-1);
+      }
+      storeItem("storedGrid", myGrid.boxes);
     }
-    storeItem("storedGrid", myGrid.boxes);
+  }
+  if (keyIsPressed) {
+    let col = floor(mouseX / cellSize);
+    let row = floor(mouseY / cellSize);
+
+    if (col >= 0 && col < cols && row >= 0 && row < rows) {
+      if (key == "q") {
+        myGrid.boxes[col][row].setColor(1);
+      } else if (key == "w") {
+        myGrid.boxes[col][row].setColor(2);
+      } else if (key == "e") {
+        myGrid.boxes[col][row].setColor(3);
+      } else if (key == "r") {
+        myGrid.boxes[col][row].setColor(0);
+      }
+      storeItem("storedGrid", myGrid.boxes);
+    }
   }
 }
 
@@ -88,20 +109,9 @@ function keyPressed() {
     removeItem("storedGrid");
     removeItem("storeGridSize");
     myGrid = new Grid();
-  } else {
-    let col = floor(mouseX / cellSize);
-    let row = floor(mouseY / cellSize);
-
-    if (col >= 0 && col < cols && row >= 0 && row < rows) {
-      if (key == "q") {
-        myGrid.boxes[col][row].changeColor(1);
-      } else if (key == "w") {
-        myGrid.boxes[col][row].changeColor(-1);
-      } else if (key == "e") {
-        myGrid.boxes[col][row].changeColor(0);
-      }
-      storeItem("storedGrid", myGrid.boxes);
-    }
+  } else if (key == "f") {
+    curColor = (curColor + 1) % colors.length;
+    colorBtn.style("background", colors[curColor]);
   }
 }
 
@@ -212,9 +222,14 @@ document.ontouchmove = function (event) {
 };
 
 function controls() {
-  createP("Trykk i rutenettet for å endre farge på rutene.");
-  let showBtn = createButton("Space (vis rutenett)");
-  let saveBtn = createButton("S (lagre bilde)");
+  let showBtn = createButton("<b>Space</b> (rutenett)");
+  colorBtn = createButton("<b>F</b> (farge)");
+  colorBtn.style("background", colors[curColor]);
+  colorBtn.mousePressed(() => {
+    curColor = (curColor + 1) % colors.length;
+    colorBtn.style("background", colors[curColor]);
+  });
+  let saveBtn = createButton("<b>S</b> (lagre bilde)");
   let resetBtn = createButton("Tøm lerret");
   showBtn.mousePressed((it) => {
     showGrid = !showGrid;
@@ -236,6 +251,11 @@ function controls() {
       circleBtn.html("Sirkler");
     }
   });
+  showBtn.parent("#buttons");
+  colorBtn.parent("#buttons");
+  saveBtn.parent("#buttons");
+  resetBtn.parent("#buttons");
+  circleBtn.parent("#buttons");
   gridSizeSlider = createSlider(10, 60, 31);
   gridSizeSlider.parent("#slider");
   gridSizeSlider.input(() => {

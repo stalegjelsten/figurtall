@@ -93,12 +93,18 @@ p {
   margin-left: 2em;
 }
 
+#buttons {
+  margin: 1em 0em 0.5em 2em;
+  display: flex;
+  max-width: 50em;
+  gap: 0.5em;
+}
+
 button {
   --kbd-color-background: #efefef;
   --kbd-color-border: #ddd;
   --kbd-color-text: #000;
 
-  margin-left: 2em;
   background-color: var(--kbd-color-background);
   color: var(--kbd-color-text);
 

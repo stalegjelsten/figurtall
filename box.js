@@ -40,4 +40,12 @@ class Box {
       this.colorIndex = 0;
     }
   }
+
+  setColor(num) {
+    if (num < 0) {
+      this.colorIndex = curColor;
+    } else {
+      this.colorIndex = num;
+    }
+  }
 }
