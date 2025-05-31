@@ -3,9 +3,6 @@ body {
   margin: 0;
   padding: 0;
   font-family: Arial, Helvetica, sans-serif;
-  /* touch-action: none;
-  -webkit-user-select: none;
-  user-select: none; */
 }
 
 canvas {
@@ -14,9 +11,6 @@ canvas {
 
 p {
   margin: 1em;
-  /*  -webkit-user-select: none; /* Safari */
-  /*  -ms-user-select: none; /* IE 10 and IE 11 */
-  /*  user-select: none; /* Standard syntax */
 }
 
 .parent {
@@ -100,14 +94,11 @@ p {
 }
 
 button {
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10 and IE 11 */
-  user-select: none; /* Standard syntax */
-  margin-left: 2em;
   --kbd-color-background: #efefef;
   --kbd-color-border: #ddd;
   --kbd-color-text: #000;
 
+  margin-left: 2em;
   background-color: var(--kbd-color-background);
   color: var(--kbd-color-text);
 
@@ -117,13 +108,9 @@ button {
 
   box-shadow: 0 2px 0 1px var(--kbd-color-border);
 
-  cursor: default;
-
   font-family: monospace;
 
   font-size: 0.81em;
-
-  line-height: 1;
 
   min-width: 0.75rem;
   max-width: 14rem;

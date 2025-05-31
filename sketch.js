@@ -1,257 +1,79 @@
-class Grid {
-  constructor() {
-    this.boxes = [];
-    for (let i = 0; i < cols; i++) {
-      this.boxes.push([]);
-      for (let j = 0; j < rows; j++) {
-        this.boxes[i].push(new Box(i, j, 0));
-      }
-    }
-  }
-
-  show() {
-    for (let i = 0; i < cols; i++) {
-      for (let j = 0; j < rows; j++) {
-        this.boxes[i][j].show();
-      }
-    }
-  }
-
-  changeAllColors() {
-    this.boxes.forEach((box) => {
-      box.colorIndex = (box.colorIndex + 1) % box.colors.length;
-      box.color = box.colors[box.colorIndex];
-    });
-  }
-
-  showGrid() {
-    for (let i = 0; i <= cols; i++) {
-      push();
-      stroke(0, 0.2);
-      strokeWeight(1);
-      line(i * gridSize, 0, i * gridSize, rows * gridSize);
-      pop();
-    }
-    for (let i = 0; i <= rows; i++) {
-      push();
-      stroke(0, 0.2);
-      strokeWeight(1);
-      line(0, i * gridSize, cols * gridSize, i * gridSize);
-      pop();
-    }
-  }
-}
-
-class Box {
-  constructor(col, row, colorIndex) {
-    this.col = col; // + int(lineWeight / 2);
-    this.row = row; // + int(lineWeight / 2);
-    this.colorIndex = colorIndex;
-    this.strokeColors = [color(0, 1), color(0, 1), color(0, 1), color(0, 1)];
-    this.colors = [
-      color(255, 0),
-      color(220, 30, 100),
-      color(120, 20, 90),
-      color(340, 30, 90),
-    ];
-  }
-
-  show() {
-    push();
-    fill(this.colors[this.colorIndex]);
-    if (this.colorIndex == 0) {
-      strokeWeight(0);
-      noStroke();
-    } else {
-      stroke(this.strokeColors[this.colorIndex]);
-      strokeWeight(lineWeight);
-    }
-    if (useCircles) {
-      ellipseMode(CORNER);
-      circle(
-        this.col * gridSize + lineWeight,
-        this.row * gridSize + lineWeight,
-        gridSize - 2 * lineWeight
-      );
-    } else {
-      square(this.col * gridSize, this.row * gridSize, gridSize);
-    }
-    pop();
-  }
-
-  changeColor(incr) {
-    if (incr == 1) {
-      this.colorIndex = (this.colorIndex + incr) % this.colors.length;
-    } else if (incr == -1) {
-      this.colorIndex--;
-      if (this.colorIndex < 0) {
-        this.colorIndex = this.colors.length - 1;
-      }
-    } else {
-      this.colorIndex = 0;
-    }
-  }
-}
-
 let myGrid;
 let cols = 30;
 let rows = 12;
-let gridSize = 30;
+let cellSize = 30;
 let showGrid = true;
 let useCircles = false;
 let lineWeight = 2;
+let colors;
 let canvas;
 let gridSizeSlider;
 
 function setup() {
-  colorMode(HSB);
-  let savedGridSize = getItem("storedGridSize");
-  if (savedGridSize !== null) {
-    gridSize = round(savedGridSize);
-  }
   canvas = createCanvas(
-    gridSize * cols + lineWeight * 8,
-    gridSize * rows + lineWeight * 8
+    cellSize * cols + lineWeight * 8,
+    cellSize * rows + lineWeight * 8
   );
   canvas.parent("divcanvas");
-  myGrid = new Grid();
-  let savedData = getItem("storedGrid");
-  console.log(savedData);
-  // If no data has been saved yet
-  if (savedData !== null) {
-    // Otherwise convert the data to Bubble objects
-    loadData(savedData);
-  }
-
-  createP("Trykk i rutenettet for å endre farge på rutene.");
-  let showBtn = createButton("Space (vis rutenett)");
-  let saveBtn = createButton("S (lagre bilde)");
-  let resetBtn = createButton("Tøm lerret");
-  showBtn.mousePressed((it) => {
-    showGrid = !showGrid;
-  });
-  saveBtn.mousePressed((it) => {
-    saveCanvas("figurtall", "png");
-  });
-  resetBtn.mousePressed((it) => {
-    removeItem("storedGrid");
-    removeItem("storeGridSize");
-    myGrid = new Grid();
-  });
-  let circleBtn = createButton("Sirkler");
-  circleBtn.mousePressed((it) => {
-    useCircles = !useCircles;
-    if (circleBtn.html() == "Sirkler") {
-      circleBtn.html("Rektangler");
-    } else {
-      circleBtn.html("Sirkler");
-    }
-  });
-  gridSizeSlider = createSlider(10, 60, 31);
-  gridSizeSlider.parent("#slider");
-  gridSizeSlider.input(() => {
-    let oldGridSize = gridSize;
-    gridSize = gridSizeSlider.value();
-    resizeCanvas(
-      gridSize * cols + lineWeight * 8,
-      gridSize * rows + lineWeight * 8
-    );
-    rescaleGrid(oldGridSize);
-    sliderValue.html(
-      "Rutenett: " +
-        gridSizeSlider.value() +
-        " px. Rader: " +
-        rows +
-        ". Kolonner: " +
-        cols
-    );
-  });
-  let sliderValue = select("#infobox");
-  sliderValue.html(
-    "Rutenett: " + gridSize + " px. Rader: " + rows + ". Kolonner: " + cols
-  );
-  let DN = select("#DN");
-  let DE = select("#DE");
-  let DS = select("#DS");
-  let DW = select("#DW");
-  let UN = select("#UN");
-  let UE = select("#UE");
-  let US = select("#US");
-  let UW = select("#UW");
-  DN.mousePressed(() => {
-    removeLine("N");
-  });
-  DE.mousePressed(() => {
-    removeLine("E");
-  });
-  DW.mousePressed(() => {
-    removeLine("W");
-  });
-  DS.mousePressed(() => {
-    removeLine("S");
-  });
-  UN.mousePressed(() => {
-    addLine("N");
-  });
-  UW.mousePressed(() => {
-    addLine("W");
-  });
-  US.mousePressed(() => {
-    addLine("S");
-  });
-  UE.mousePressed(() => {
-    addLine("E");
-  });
+  colorMode(HSB);
+  colors = [
+    color(255, 0),
+    color(220, 30, 100),
+    color(120, 20, 90),
+    color(340, 30, 90),
+  ];
+  loadData();
+  controls();
 }
 
 function draw() {
   background(255);
-  if (showGrid) {
-    myGrid.showGrid();
-  }
   myGrid.show();
 }
 
-function rescaleGrid(oldGridSize) {
-  lineWeight = ceil(gridSize / 20);
+function rescaleGrid() {
+  lineWeight = ceil(cellSize / 20);
   storeItem("storedGrid", myGrid.boxes);
-  storeItem("storedGridSize", gridSize);
+  storeItem("storedGridSize", cellSize);
 }
 
-function resizeGrid(newW, newH) {
-  if (newW < cols || newH < rows) {
-  }
-
-  let newboxes = [];
-  storeItem("storedGrid", newboxes);
-  resizeCanvas(newW * gridSize, newH * gridSize);
-}
-
-function loadData(storedGrid) {
-  console.log(storedGrid);
-  for (let i = 0; i < cols; i++) {
-    for (let j = 0; j < rows; j++) {
-      myGrid.boxes[i][j] = new Box(
-        storedGrid[i][j].col,
-        storedGrid[i][j].row,
-        storedGrid[i][j].colorIndex
-      );
+function loadData() {
+  let storedGrid = getItem("storedGrid");
+  let storedGridSize = getItem("storedGridSize");
+  myGrid = new Grid();
+  if (storedGrid !== null) {
+    while (storedGrid.length > myGrid.boxes.length) {
+      addLine("E");
     }
+    while (storedGrid[0].length > myGrid.boxes[0].length) {
+      addLine("S");
+    }
+    for (let i = 0; i < cols; i++) {
+      for (let j = 0; j < rows; j++) {
+        if (typeof storedGrid[i][j] != "undefined") {
+          myGrid.boxes[i][j] = new Box(
+            storedGrid[i][j].col,
+            storedGrid[i][j].row,
+            storedGrid[i][j].colorIndex
+          );
+        }
+      }
+    }
+  }
+  if (storedGridSize !== null) {
+    cellSize = round(storedGridSize);
   }
 }
 
 function mousePressed() {
-  // which cell are we in?
-  let col = floor(mouseX / gridSize);
-  let row = floor(mouseY / gridSize);
+  let col = floor(mouseX / cellSize);
+  let row = floor(mouseY / cellSize);
 
   if (col >= 0 && col < cols && row >= 0 && row < rows) {
     if (mouseButton == LEFT) {
       myGrid.boxes[col][row].changeColor(1);
     } else if (mouseButton == RIGHT) {
       myGrid.boxes[col][row].changeColor(-1);
-    } else if (mouseButton == CENTER) {
-      myGrid.boxes[col][row].changeColor(0);
     }
     storeItem("storedGrid", myGrid.boxes);
   }
@@ -267,8 +89,8 @@ function keyPressed() {
     removeItem("storeGridSize");
     myGrid = new Grid();
   } else {
-    let col = floor(mouseX / gridSize);
-    let row = floor(mouseY / gridSize);
+    let col = floor(mouseX / cellSize);
+    let row = floor(mouseY / cellSize);
 
     if (col >= 0 && col < cols && row >= 0 && row < rows) {
       if (key == "q") {
@@ -317,12 +139,17 @@ function removeLine(dir) {
     myGrid.boxes = newboxes;
   }
   resizeCanvas(
-    cols * gridSize + lineWeight * 8,
-    rows * gridSize + lineWeight * 8
+    cols * cellSize + lineWeight * 8,
+    rows * cellSize + lineWeight * 8
   );
   let sliderValue = select("#infobox");
   sliderValue.html(
-    "Rutenett: " + gridSize + " px. Rader: " + rows + ". Kolonner: " + cols
+    "Cellestørrelse: " +
+      cellSize +
+      " px. Rader: " +
+      rows +
+      ". Kolonner: " +
+      cols
   );
 }
 
@@ -363,28 +190,110 @@ function addLine(dir) {
     rows++;
   }
   resizeCanvas(
-    cols * gridSize + lineWeight * 8,
-    rows * gridSize + lineWeight * 8
+    cols * cellSize + lineWeight * 8,
+    rows * cellSize + lineWeight * 8
   );
   let sliderValue = select("#infobox");
   sliderValue.html(
-    "Rutenett: " + gridSize + " px. Rader: " + rows + ". Kolonner: " + cols
+    "Cellestørrelse: " +
+      cellSize +
+      " px. Rader: " +
+      rows +
+      ". Kolonner: " +
+      cols
   );
 }
 
-function touchStarted() {
-  var fs = fullscreen();
-  if (!fs) {
-    fullscreen(true);
-  }
-}
-/* full screening will change the size of the canvas */
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
-}
 /* prevents the mobile browser from processing some default
  * touch events, like swiping left for "back" or scrolling the page.
  */
 document.ontouchmove = function (event) {
   event.preventDefault();
 };
+
+function controls() {
+  createP("Trykk i rutenettet for å endre farge på rutene.");
+  let showBtn = createButton("Space (vis rutenett)");
+  let saveBtn = createButton("S (lagre bilde)");
+  let resetBtn = createButton("Tøm lerret");
+  showBtn.mousePressed((it) => {
+    showGrid = !showGrid;
+  });
+  saveBtn.mousePressed((it) => {
+    saveCanvas("figurtall", "png");
+  });
+  resetBtn.mousePressed((it) => {
+    removeItem("storedGrid");
+    removeItem("storeGridSize");
+    myGrid = new Grid();
+  });
+  let circleBtn = createButton("Sirkler");
+  circleBtn.mousePressed((it) => {
+    useCircles = !useCircles;
+    if (circleBtn.html() == "Sirkler") {
+      circleBtn.html("Rektangler");
+    } else {
+      circleBtn.html("Sirkler");
+    }
+  });
+  gridSizeSlider = createSlider(10, 60, 31);
+  gridSizeSlider.parent("#slider");
+  gridSizeSlider.input(() => {
+    let oldGridSize = cellSize;
+    cellSize = gridSizeSlider.value();
+    resizeCanvas(
+      cellSize * cols + lineWeight * 8,
+      cellSize * rows + lineWeight * 8
+    );
+    rescaleGrid();
+    sliderValue.html(
+      "Cellestørrelse: " +
+        gridSizeSlider.value() +
+        " px. Rader: " +
+        rows +
+        ". Kolonner: " +
+        cols
+    );
+  });
+  let sliderValue = select("#infobox");
+  sliderValue.html(
+    "Cellestørrelse: " +
+      cellSize +
+      " px. Rader: " +
+      rows +
+      ". Kolonner: " +
+      cols
+  );
+  let DN = select("#DN");
+  let DE = select("#DE");
+  let DS = select("#DS");
+  let DW = select("#DW");
+  let UN = select("#UN");
+  let UE = select("#UE");
+  let US = select("#US");
+  let UW = select("#UW");
+  DN.mousePressed(() => {
+    removeLine("N");
+  });
+  DE.mousePressed(() => {
+    removeLine("E");
+  });
+  DW.mousePressed(() => {
+    removeLine("W");
+  });
+  DS.mousePressed(() => {
+    removeLine("S");
+  });
+  UN.mousePressed(() => {
+    addLine("N");
+  });
+  UW.mousePressed(() => {
+    addLine("W");
+  });
+  US.mousePressed(() => {
+    addLine("S");
+  });
+  UE.mousePressed(() => {
+    addLine("E");
+  });
+}
