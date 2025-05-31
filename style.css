@@ -9,11 +9,17 @@ canvas {
   touch-action: none;
   display: block;
   overscroll-behavior: none;
+  -webkit-touch-callout: none; /* iOS: no callout on long-press */
+  -webkit-user-select: none; /* iOS: no text selection */
+  -webkit-tap-highlight-color: transparent;
 }
 
 #divcanvas {
   touch-action: none;
   overscroll-behavior: none;
+  -webkit-touch-callout: none; /* iOS: no callout on long-press */
+  -webkit-user-select: none; /* iOS: no text selection */
+  -webkit-tap-highlight-color: transparent;
 }
 
 #welcomeInfoContainer {
@@ -59,7 +65,7 @@ kbd {
   display: inline;
   text-align: center;
 
-  padding: 4px 2px;
+  padding: 4px -2px;
 
   position: relative;
   top: -1px;

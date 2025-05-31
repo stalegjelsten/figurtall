@@ -21,12 +21,22 @@ function setup() {
   canvas.elt.style.touchAction = "none";
   displayWelcomeText();
   canvas.elt.setAttribute("tabindex", "0");
+  canvas.elt.setAttribute("touch-action", "none"); // Disable double-tap zoom and scrolling
+
   canvas.elt.style.outline = "none";
   canvas.elt.focus();
 
-  canvas.mousePressed(() => {
-    canvas.elt.focus();
-  });
+  // 3) Add a touchstart listener *only on the canvas* that calls preventDefault()
+  //    This blocks native scrolling/zooming/pull-to-refresh when the user touches *inside* the canvas.
+  canvas.elt.addEventListener(
+    "touchstart",
+    function (e) {
+      e.preventDefault();
+      // We do NOT call stopImmediatePropagation() here—so p5’s own handlers (and other
+      // listeners on the canvas) still run. We just want to block Safari’s native gestures.
+    },
+    { passive: false }
+  );
 
   colorMode(HSB);
   colors = [
@@ -127,6 +137,9 @@ function keyPressed() {
   } else if (key == "f") {
     curColor = (curColor + 1) % colors.length;
     colorBtn.style("background", colors[curColor]);
+  } else if (key == "h") {
+    select("#welcomeInfoContainer").show();
+    select("#welcomeInfoContainer").style("display", "flex");
   } else if (keyCode === UP_ARROW && keyIsDown(SHIFT)) {
     removeLine("N");
   } else if (keyCode === UP_ARROW) {
@@ -351,6 +364,24 @@ function controls() {
   UE.mousePressed(() => {
     addLine("E");
   });
+}
+
+function touchStarted() {
+  let col = floor(mouseX / cellSize);
+  let row = floor(mouseY / cellSize);
+  if (col >= 0 && col < cols && row >= 0 && row < rows) {
+    myGrid.boxes[col][row].setColor(-1);
+    storeItem("storedGrid", myGrid.boxes);
+  }
+}
+
+function touchMoved() {
+  let col = floor(mouseX / cellSize);
+  let row = floor(mouseY / cellSize);
+  if (col >= 0 && col < cols && row >= 0 && row < rows) {
+    myGrid.boxes[col][row].setColor(-1);
+    storeItem("storedGrid", myGrid.boxes);
+  }
 }
 
 function displayWelcomeText() {
