@@ -10,6 +10,7 @@ let colors;
 let canvas;
 let gridSizeSlider;
 let colorBtn;
+let resetText;
 
 function setup() {
   canvas = createCanvas(
@@ -17,6 +18,10 @@ function setup() {
     cellSize * rows + lineWeight * 8
   );
   canvas.parent("divcanvas");
+  canvas.elt.style.touchAction = "none";
+  canvas.touchStarted(handleTap);
+  touchWarning();
+
   colorMode(HSB);
   colors = [
     color(255, 0),
@@ -51,6 +56,12 @@ function loadData() {
     while (storedGrid[0].length > myGrid.boxes[0].length) {
       addLine("S");
     }
+    while (storedGrid.length < myGrid.boxes.length) {
+      removeLine("E");
+    }
+    while (storedGrid[0].length < myGrid.boxes[0].length) {
+      removeLine("S");
+    }
     for (let i = 0; i < cols; i++) {
       for (let j = 0; j < rows; j++) {
         if (typeof storedGrid[i][j] != "undefined") {
@@ -65,6 +76,15 @@ function loadData() {
   }
   if (storedGridSize !== null) {
     cellSize = round(storedGridSize);
+  }
+}
+
+function handleTap() {
+  let col = floor(touches[0].x / cellSize);
+  let row = floor(touches[0].y / cellSize);
+  if (col >= 0 && col < cols && row >= 0 && row < rows) {
+    myGrid.boxes[col][row].setColor(-1);
+    storeItem("storedGrid", myGrid.boxes);
   }
 }
 
@@ -106,13 +126,17 @@ function keyPressed() {
   } else if (key == "s") {
     saveCanvas("figurtall", "png");
   } else if (key == "p") {
-    removeItem("storedGrid");
-    removeItem("storeGridSize");
-    myGrid = new Grid();
+    resetCanvas();
   } else if (key == "f") {
     curColor = (curColor + 1) % colors.length;
     colorBtn.style("background", colors[curColor]);
   }
+}
+
+function resetCanvas() {
+  removeItem("storedGrid");
+  removeItem("storeGridSize");
+  myGrid = new Grid();
 }
 
 function removeLine(dir) {
@@ -161,6 +185,8 @@ function removeLine(dir) {
       ". Kolonner: " +
       cols
   );
+  storeItem("storedGrid", myGrid.boxes);
+  storeItem("storedGridSize", cellSize);
 }
 
 function addLine(dir) {
@@ -212,6 +238,8 @@ function addLine(dir) {
       ". Kolonner: " +
       cols
   );
+  storeItem("storedGrid", myGrid.boxes);
+  storeItem("storedGridSize", cellSize);
 }
 
 /* prevents the mobile browser from processing some default
@@ -220,6 +248,19 @@ function addLine(dir) {
 document.ontouchmove = function (event) {
   event.preventDefault();
 };
+
+function hasTouchSupport() {
+  return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+}
+
+function touchWarning() {
+  if (hasTouchSupport) {
+    let touchInfoBox = select("#infoTouch");
+    touchInfoBox.html(
+      "<p><b>Advarsel (mobil):</b> Du <b>må</b> velge farge før du kan tegne.</p>"
+    );
+  }
+}
 
 function controls() {
   let showBtn = createButton("<b>Space</b> (rutenett)");
@@ -238,9 +279,7 @@ function controls() {
     saveCanvas("figurtall", "png");
   });
   resetBtn.mousePressed((it) => {
-    removeItem("storedGrid");
-    removeItem("storeGridSize");
-    myGrid = new Grid();
+    resetCanvas();
   });
   let circleBtn = createButton("Sirkler");
   circleBtn.mousePressed((it) => {
@@ -256,6 +295,9 @@ function controls() {
   saveBtn.parent("#buttons");
   resetBtn.parent("#buttons");
   circleBtn.parent("#buttons");
+  // resetText.mousePressed(() => {
+  //   resetCanvas();
+  // });
   gridSizeSlider = createSlider(10, 60, 31);
   gridSizeSlider.parent("#slider");
   gridSizeSlider.input(() => {

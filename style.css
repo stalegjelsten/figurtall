@@ -6,11 +6,14 @@ body {
 }
 
 canvas {
+  touch-action: none;
   display: block;
+  overscroll-behavior: none;
 }
 
-p {
-  margin: 1em;
+#divcanvas {
+  touch-action: none;
+  overscroll-behavior: none;
 }
 
 .parent {
@@ -40,6 +43,10 @@ p {
   aspect-ratio: 1/1;
   display: inline;
   margin: 0;
+}
+
+#infoTouch {
+  margin-left: 2em;
 }
 
 #div1 {
