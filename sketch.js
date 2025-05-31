@@ -20,6 +20,13 @@ function setup() {
   canvas.parent("divcanvas");
   canvas.elt.style.touchAction = "none";
   displayWelcomeText();
+  canvas.elt.setAttribute("tabindex", "0");
+  canvas.elt.style.outline = "none";
+  canvas.elt.focus();
+
+  canvas.mousePressed(() => {
+    canvas.elt.focus();
+  });
 
   colorMode(HSB);
   colors = [
@@ -120,6 +127,22 @@ function keyPressed() {
   } else if (key == "f") {
     curColor = (curColor + 1) % colors.length;
     colorBtn.style("background", colors[curColor]);
+  } else if (keyCode === UP_ARROW && keyIsDown(SHIFT)) {
+    removeLine("N");
+  } else if (keyCode === UP_ARROW) {
+    addLine("N");
+  } else if (keyCode === RIGHT_ARROW && keyIsDown(SHIFT)) {
+    removeLine("E");
+  } else if (keyCode === RIGHT_ARROW) {
+    addLine("E");
+  } else if (keyCode === DOWN_ARROW && keyIsDown(SHIFT)) {
+    removeLine("S");
+  } else if (keyCode === DOWN_ARROW) {
+    addLine("S");
+  } else if (keyCode === LEFT_ARROW && keyIsDown(SHIFT)) {
+    removeLine("W");
+  } else if (keyCode === LEFT_ARROW) {
+    addLine("W");
   }
 }
 
