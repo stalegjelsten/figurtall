@@ -1,5 +1,3 @@
-document.addEventListener("touchstart", {});
-
 class Grid {
   constructor() {
     this.boxes = [];
@@ -109,7 +107,7 @@ function setup() {
   colorMode(HSB);
   let savedGridSize = getItem("storedGridSize");
   if (savedGridSize !== null) {
-    gridSize = int(savedGridSize + 1);
+    gridSize = round(savedGridSize);
   }
   canvas = createCanvas(
     gridSize * cols + lineWeight * 8,
@@ -230,10 +228,15 @@ function resizeGrid(newW, newH) {
 }
 
 function loadData(storedGrid) {
-  let i = 0;
-  for (let box of storedGrid) {
-    myGrid.boxes[i] = new Box(box.col, box.row, box.colorIndex);
-    i++;
+  console.log(storedGrid);
+  for (let i = 0; i < cols; i++) {
+    for (let j = 0; j < rows; j++) {
+      myGrid.boxes[i][j] = new Box(
+        storedGrid[i][j].col,
+        storedGrid[i][j].row,
+        storedGrid[i][j].colorIndex
+      );
+    }
   }
 }
 
@@ -254,36 +257,29 @@ function mousePressed() {
   }
 }
 
-// function touchStarted() {
-//   // which cell are we in?
-//   let col = floor(mouseX / gridSize);
-//   let row = floor(mouseY / gridSize);
-
-//   myGrid[2][2].changeColor(1);
-//   if (col >= 0 && col < cols && row >= 0 && row < rows) {
-//     myGrid.boxes[col][row].changeColor(1);
-//     storeItem("storedGrid", myGrid.boxes);
-//   }
-// }
-
 function keyPressed() {
   if (key == " ") {
     showGrid = !showGrid;
   } else if (key == "s") {
     saveCanvas("figurtall", "png");
-  }
-  let col = floor(mouseX / gridSize);
-  let row = floor(mouseY / gridSize);
+  } else if (key == "p") {
+    removeItem("storedGrid");
+    removeItem("storeGridSize");
+    myGrid = new Grid();
+  } else {
+    let col = floor(mouseX / gridSize);
+    let row = floor(mouseY / gridSize);
 
-  if (col >= 0 && col < cols && row >= 0 && row < rows) {
-    if (key == "q") {
-      myGrid.boxes[col][row].changeColor(1);
-    } else if (key == "w") {
-      myGrid.boxes[col][row].changeColor(-1);
-    } else if (key == "e") {
-      myGrid.boxes[col][row].changeColor(0);
+    if (col >= 0 && col < cols && row >= 0 && row < rows) {
+      if (key == "q") {
+        myGrid.boxes[col][row].changeColor(1);
+      } else if (key == "w") {
+        myGrid.boxes[col][row].changeColor(-1);
+      } else if (key == "e") {
+        myGrid.boxes[col][row].changeColor(0);
+      }
+      storeItem("storedGrid", myGrid.boxes);
     }
-    storeItem("storedGrid", myGrid.boxes);
   }
 }
 
@@ -375,3 +371,20 @@ function addLine(dir) {
     "Rutenett: " + gridSize + " px. Rader: " + rows + ". Kolonner: " + cols
   );
 }
+
+function touchStarted() {
+  var fs = fullscreen();
+  if (!fs) {
+    fullscreen(true);
+  }
+}
+/* full screening will change the size of the canvas */
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
+/* prevents the mobile browser from processing some default
+ * touch events, like swiping left for "back" or scrolling the page.
+ */
+document.ontouchmove = function (event) {
+  event.preventDefault();
+};
