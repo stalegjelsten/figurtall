@@ -1,6 +1,6 @@
 let myGrid;
-let cols = 30;
-let rows = 12;
+let cols = 20;
+let rows = 10;
 let cellSize = 30;
 let showGrid = true;
 let useCircles = false;
@@ -19,8 +19,7 @@ function setup() {
   );
   canvas.parent("divcanvas");
   canvas.elt.style.touchAction = "none";
-  canvas.touchStarted(handleTap);
-  touchWarning();
+  displayWelcomeText();
 
   colorMode(HSB);
   colors = [
@@ -42,12 +41,15 @@ function draw() {
 function rescaleGrid() {
   lineWeight = ceil(cellSize / 20);
   storeItem("storedGrid", myGrid.boxes);
-  storeItem("storedGridSize", cellSize);
+  storeItem("storedCellSize", cellSize);
 }
 
 function loadData() {
   let storedGrid = getItem("storedGrid");
-  let storedGridSize = getItem("storedGridSize");
+  let storedCellSize = getItem("storedCellSize");
+  if (storedCellSize !== null) {
+    cellSize = round(storedCellSize);
+  }
   myGrid = new Grid();
   if (storedGrid !== null) {
     while (storedGrid.length > myGrid.boxes.length) {
@@ -73,18 +75,6 @@ function loadData() {
         }
       }
     }
-  }
-  if (storedGridSize !== null) {
-    cellSize = round(storedGridSize);
-  }
-}
-
-function handleTap() {
-  let col = floor(touches[0].x / cellSize);
-  let row = floor(touches[0].y / cellSize);
-  if (col >= 0 && col < cols && row >= 0 && row < rows) {
-    myGrid.boxes[col][row].setColor(-1);
-    storeItem("storedGrid", myGrid.boxes);
   }
 }
 
@@ -186,7 +176,7 @@ function removeLine(dir) {
       cols
   );
   storeItem("storedGrid", myGrid.boxes);
-  storeItem("storedGridSize", cellSize);
+  storeItem("storedCellSize", cellSize);
 }
 
 function addLine(dir) {
@@ -239,27 +229,7 @@ function addLine(dir) {
       cols
   );
   storeItem("storedGrid", myGrid.boxes);
-  storeItem("storedGridSize", cellSize);
-}
-
-/* prevents the mobile browser from processing some default
- * touch events, like swiping left for "back" or scrolling the page.
- */
-document.ontouchmove = function (event) {
-  event.preventDefault();
-};
-
-function hasTouchSupport() {
-  return "ontouchstart" in window || navigator.maxTouchPoints > 0;
-}
-
-function touchWarning() {
-  if (hasTouchSupport) {
-    let touchInfoBox = select("#infoTouch");
-    touchInfoBox.html(
-      "<p><b>Advarsel (mobil):</b> Du <b>må</b> velge farge før du kan tegne.</p>"
-    );
-  }
+  storeItem("storedCellSize", cellSize);
 }
 
 function controls() {
@@ -358,4 +328,12 @@ function controls() {
   UE.mousePressed(() => {
     addLine("E");
   });
+}
+
+function displayWelcomeText() {
+  let dismissWelcome = getItem("dismissWelcome");
+  if (dismissWelcome != "true") {
+    select("#welcomeInfoContainer").show();
+    select("#welcomeInfoContainer").style("display", "flex");
+  }
 }

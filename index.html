@@ -19,6 +19,87 @@
     <div id="divcanvas">
       <script src="sketch.js"></script>
     </div>
+    <div id="welcomeInfoContainer">
+      <div id="welcomeInfo">
+        <h3>Figurtall</h3>
+        <p>
+          Velg farge og dra over rutenettet for å plassere brikker. Trykk på
+          pilene for å justere størrelsen på lerretet.
+        </p>
+
+        <div style="display: flex; flex-direction: column">
+          <h4>Hurtigtaster</h4>
+          <div style="display: flex; gap: 0.5em">
+            <div
+              style="
+                flex: 1;
+                min-width: 2.8em;
+                margin-bottom: 1em;
+                text-align: center;
+              "
+            >
+              <kbd>F</kbd>
+            </div>
+            <div style="flex: 3">Bytt farge</div>
+          </div>
+          <div style="display: flex; gap: 0.5em">
+            <div
+              style="
+                flex: 1;
+                min-width: 2.8em;
+                margin-bottom: 1em;
+                text-align: center;
+              "
+            >
+              <kbd>Space</kbd>
+            </div>
+            <div style="flex: 3">Skjul rutenett</div>
+          </div>
+          <div style="display: flex; gap: 0.5em">
+            <div
+              style="
+                flex: 1;
+                min-width: 2.8em;
+                margin-bottom: 1em;
+                text-align: center;
+              "
+            >
+              <kbd>S</kbd>
+            </div>
+            <div style="flex: 3">Lagre bilde</div>
+          </div>
+          <div style="display: flex; gap: 0.5em">
+            <div
+              style="
+                flex: 1;
+                min-width: 2.8em;
+                margin-bottom: 1em;
+                text-align: center;
+              "
+            >
+              <kbd>Q</kbd>
+              <kbd>W</kbd>
+              <kbd>E</kbd>
+              <kbd>R</kbd>
+            </div>
+            <div style="flex: 3">Tegn med blå, grønn, rødt eller visk ut.</div>
+          </div>
+        </div>
+        <p>
+          <b>🚨 Bug 🚨</b> Hvis du er på en mobil enhet så <b>må</b> du trykke
+          på en av knappene (for eksempel <kbd>Farge</kbd>) før du får mulighet
+          til å tegne på lerretet.
+        </p>
+        <p style="text-align: center">
+          <button
+            id="dismissWelcome"
+            onclick="localStorage.setItem('dismissWelcome', 'true'); document.getElementById('welcomeInfoContainer').style = 'display: none';"
+          >
+            Ok
+          </button>
+        </p>
+      </div>
+    </div>
     <div class="parent">
       <div class="directionPad" id="div1">
         <button id="DW">︎︎→</button>
@@ -34,7 +115,6 @@
       <div class="directionPad" id="div10">Legg til</div>
     </div>
     <div id="buttons"></div>
-    <div id="infoTouch"></div>
     <div id="sliderparent">
       <div id="sliderName">Cellestørrelse:</div>
       <div id="slider"></div>
