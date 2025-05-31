@@ -67,7 +67,17 @@ function loadData() {
   if (storedCellSize !== null) {
     cellSize = round(storedCellSize);
   }
+  if (storedGrid !== null) {
+    cols = storedGrid.length;
+    rows = storedGrid[0].length;
+  }
   myGrid = new Grid();
+
+  resizeCanvas(
+    cols * cellSize + lineWeight * 8,
+    rows * cellSize + lineWeight * 8
+  );
+
   if (storedGrid !== null) {
     while (storedGrid.length > myGrid.boxes.length) {
       addLine("E");
