@@ -26,14 +26,10 @@ function setup() {
   canvas.elt.style.outline = "none";
   canvas.elt.focus();
 
-  // 3) Add a touchstart listener *only on the canvas* that calls preventDefault()
-  //    This blocks native scrolling/zooming/pull-to-refresh when the user touches *inside* the canvas.
   canvas.elt.addEventListener(
     "touchstart",
-    function (e) {
+    function(e) {
       e.preventDefault();
-      // We do NOT call stopImmediatePropagation() here—so p5’s own handlers (and other
-      // listeners on the canvas) still run. We just want to block Safari’s native gestures.
     },
     { passive: false }
   );
@@ -53,6 +49,7 @@ function draw() {
   background(255);
   checkMouse();
   myGrid.show();
+  cursor("assets/cursor.png", 1, 31);
 }
 
 function rescaleGrid() {
@@ -104,6 +101,7 @@ function loadData() {
     }
   }
 }
+
 
 function checkMouse() {
   if (mouseIsPressed) {
@@ -215,11 +213,11 @@ function removeLine(dir) {
   let sliderValue = select("#infobox");
   sliderValue.html(
     "Cellestørrelse: " +
-      cellSize +
-      " px. Rader: " +
-      rows +
-      ". Kolonner: " +
-      cols
+    cellSize +
+    " px. Rader: " +
+    rows +
+    ". Kolonner: " +
+    cols
   );
   storeItem("storedGrid", myGrid.boxes);
   storeItem("storedCellSize", cellSize);
@@ -268,11 +266,11 @@ function addLine(dir) {
   let sliderValue = select("#infobox");
   sliderValue.html(
     "Cellestørrelse: " +
-      cellSize +
-      " px. Rader: " +
-      rows +
-      ". Kolonner: " +
-      cols
+    cellSize +
+    " px. Rader: " +
+    rows +
+    ". Kolonner: " +
+    cols
   );
   storeItem("storedGrid", myGrid.boxes);
   storeItem("storedCellSize", cellSize);
@@ -288,17 +286,17 @@ function controls() {
   });
   let saveBtn = createButton("<b>S</b> (lagre bilde)");
   let resetBtn = createButton("Tøm lerret");
-  showBtn.mousePressed((it) => {
+  showBtn.mousePressed(() => {
     showGrid = !showGrid;
   });
-  saveBtn.mousePressed((it) => {
+  saveBtn.mousePressed(() => {
     saveCanvas("figurtall", "png");
   });
-  resetBtn.mousePressed((it) => {
+  resetBtn.mousePressed(() => {
     resetCanvas();
   });
   let circleBtn = createButton("Sirkler");
-  circleBtn.mousePressed((it) => {
+  circleBtn.mousePressed(() => {
     useCircles = !useCircles;
     if (circleBtn.html() == "Sirkler") {
       circleBtn.html("Rektangler");
@@ -311,9 +309,6 @@ function controls() {
   saveBtn.parent("#buttons");
   resetBtn.parent("#buttons");
   circleBtn.parent("#buttons");
-  // resetText.mousePressed(() => {
-  //   resetCanvas();
-  // });
   gridSizeSlider = createSlider(10, 60, 31);
   gridSizeSlider.parent("#slider");
   gridSizeSlider.input(() => {
@@ -326,21 +321,21 @@ function controls() {
     rescaleGrid();
     sliderValue.html(
       "Cellestørrelse: " +
-        gridSizeSlider.value() +
-        " px. Rader: " +
-        rows +
-        ". Kolonner: " +
-        cols
+      gridSizeSlider.value() +
+      " px. Rader: " +
+      rows +
+      ". Kolonner: " +
+      cols
     );
   });
   let sliderValue = select("#infobox");
   sliderValue.html(
     "Cellestørrelse: " +
-      cellSize +
-      " px. Rader: " +
-      rows +
-      ". Kolonner: " +
-      cols
+    cellSize +
+    " px. Rader: " +
+    rows +
+    ". Kolonner: " +
+    cols
   );
   let DN = select("#DN");
   let DE = select("#DE");
